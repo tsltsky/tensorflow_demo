@@ -1,8 +1,8 @@
 import tensorflow as tf
 
 from data_loader.data_generator import DataGenerator
-from models.example_model import ExampleModel
-from trainers.example_trainer import ExampleTrainer
+from models.Linear_model import LinearModel
+from trainers.linear_trainer import LinearTrainer
 
 from utils.config import process_config
 from utils.dirs import create_dirs
@@ -19,25 +19,22 @@ def main():
     except:
         print("missing or invalid arguments")
         exit(0)
-
     # create the experiments dirs
     create_dirs([config.summary_dir, config.checkpoint_dir])
     # create tensorflow session
     sess = tf.Session()
     # create your data generator
     data = DataGenerator(config)
-    
     # create an instance of the model you want
-    model = ExampleModel(config)
+    model = LinearModel(config)
     # create tensorboard logger
     logger = Logger(sess, config)
     # create trainer and pass all the previous components to it
-    trainer = ExampleTrainer(sess, model, data, config, logger)
-    #load model if exists
-    # model.load(sess)
+    trainer = LinearTrainer(sess, model, data, config, logger)
+    # load model if exists
+    model.load(sess)
     # here you train your model
-    trainer.train()
-
+    trainer.eval(data)
 
 if __name__ == '__main__':
     main()
